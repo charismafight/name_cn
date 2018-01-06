@@ -21,13 +21,32 @@ def remove_useless_word(str):
     return str
 
 
-chuci = remove_punctuation((''.join(open("material/chuci.txt", encoding='utf8').readlines()).replace(' ', '')))
-# replace useless words TODO
-chuci = remove_useless_word(chuci)
-seg_list = jieba.cut(chuci, cut_all=False)
-word_count = defaultdict(int)
-for word in seg_list:
-    word_count[word] += 1
+def show_img(wc):
+    plt.figure()
+    plt.imshow(wc)
+    plt.axis("off")
+
+
+def cloud(issue_name):
+    file_path = "material/{}.txt".format(issue_name)
+    issue = remove_punctuation((''.join(open(file_path, encoding='utf8').readlines()).replace(' ', '')))
+    issue = remove_useless_word(issue)
+    seg_list = jieba.cut(issue, cut_all=False)
+    word_count = defaultdict(int)
+    for word in seg_list:
+        word_count[word] += 1
+
+    wc = WordCloud(font_path=u"static/fonts/simhei.ttf",
+                   max_words=2000,
+                   width=1920,
+                   height=1080,
+                   background_color="black",
+                   margin=5)
+
+    result = 'result/{}.png'.format(issue_name)
+    wc.generate_from_frequencies(word_count)
+    wc.to_file(result)
+    show_img(wc)
 
 
 # print("/".join(seg_list))
@@ -45,20 +64,4 @@ for word in seg_list:
 #
 # print(key_words)
 
-
-def show_img(wc):
-    plt.figure()
-    plt.imshow(wc)
-    plt.axis("off")
-
-
-wc = WordCloud(font_path=u"static/fonts/simhei.ttf",
-               max_words=200,
-               width=1920,
-               height=1080,
-               background_color="black",
-               margin=5)
-
-wc.generate_from_frequencies(word_count)
-wc.to_file('result/chuci.png')
-show_img(wc)
+cloud('luoshenfu')
